@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class MerryGoRound1 : MonoBehaviour
 {
-    [Header("Настройки кубиков")]
+    [Header("Настройки")]
     [SerializeField] private GameObject cubePrefab;
     [SerializeField] private int cubeCount = 8;
     [SerializeField] private float radius = 5f;
     [SerializeField] private float rotationSpeed = 30f;
     [SerializeField] private bool clockwise = true;
     
-    [Header("Распределение кубиков")]
+    [Header("Распределение")]
     [SerializeField] private bool uniformDistribution = true;
     [SerializeField] private float spacing = 1f;
     
@@ -41,7 +41,7 @@ public class MerryGoRound1 : MonoBehaviour
     {
         if (cubePrefab == null)
         {
-            Debug.LogError("Префаб кубика не назначен!");
+            Debug.LogError("Префаб не назначен!");
             return;
         }
         foreach (var cube in cubes)
