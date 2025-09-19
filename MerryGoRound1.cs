@@ -28,7 +28,7 @@ public class MerryGoRound1 : MonoBehaviour
         CacheParameters();
         CreateCubes();
     }
-
+    //кэшим параметры и сравниваем их изменение чтобы не пересоздавать префаб каждый апдейт
     void CacheParameters()
     {
         lastCubeCount = cubeCount;
@@ -36,7 +36,7 @@ public class MerryGoRound1 : MonoBehaviour
         lastUniformDistribution = uniformDistribution;
         lastSpacing = spacing;
     }
-
+    
     void CreateCubes()
     {
         if (cubePrefab == null)
@@ -68,11 +68,11 @@ public class MerryGoRound1 : MonoBehaviour
     
     void CreateUniformCubes()
     {
-        float angleStep = 360f / cubeCount;
+        var normalDistrib = 360f / cubeCount;
         
         for (int i = 0; i < cubeCount; i++)
         {
-            float angle = i * angleStep;
+            var angle = i * normalDistrib;
             CreateCubeAtAngle(angle, i);
         }
     }
@@ -81,34 +81,31 @@ public class MerryGoRound1 : MonoBehaviour
     {
         for (int i = 0; i < cubeCount; i++)
         {
-            float angle = i * spacing;
+            var angle = i * spacing;
             CreateCubeAtAngle(angle, i);
         }
     }
 
     void CreateCubeAtAngle(float angle, int index)
     {
-        Vector3 position = CalculatePosition(angle);
-        GameObject cube = Instantiate(cubePrefab, position, Quaternion.identity, transform);
-        
+        var position = CalculatePosition(angle);
+        var cube = Instantiate(cubePrefab, position, Quaternion.identity, transform);
         cubes.Add(cube);
         initialAngles.Add(angle);
-        
         cube.name = $"Cube_{index}";
     }
 
     Vector3 CalculatePosition(float angle)
     {
-        float rad = angle * Mathf.Deg2Rad;
-        float x = Mathf.Cos(rad) * radius;
-        float z = Mathf.Sin(rad) * radius;
+        var rad = angle * Mathf.Deg2Rad;
+        var x = Mathf.Cos(rad) * radius;
+        var z = Mathf.Sin(rad) * radius;
         return new Vector3(x, 0, z);
     }
 
     void Update()
     {
         CheckForParameterChanges();
-        
         if (parametersChanged)
         {
             CreateCubes();
@@ -116,35 +113,35 @@ public class MerryGoRound1 : MonoBehaviour
         
         RotateCubes();
     }
-
+    //проверка изменения параметров
     void CheckForParameterChanges()
     {
-        if (cubeCount != lastCubeCount || 
-            radius != lastRadius || 
-            uniformDistribution != lastUniformDistribution || 
-            Mathf.Abs(spacing - lastSpacing) > 0.001f)
+        if (cubeCount != lastCubeCount || radius != lastRadius || uniformDistribution != lastUniformDistribution || Mathf.Abs(spacing - lastSpacing) > 0.001f)
         {
             parametersChanged = true;
         }
     }
-
+    //метод который вращает кубы - вызывается в апдейте 
     void RotateCubes()
     {
-        float direction = clockwise ? 1f : -1f;
-        float currentRotation = Time.time * rotationSpeed * direction;
-        
+        //можно енум; посмотреть как у других на паре; я <3 тернарные операции 
+        var direction = clockwise ? 1f : -1f;
+        var currentRotation = Time.time * rotationSpeed * direction;
+        //цикл по созданным кубам - двигаем каждый кубик в цикле
         for (int i = 0; i < cubes.Count; i++)
         {
             if (cubes[i] != null)
             {
-                float finalAngle = initialAngles[i] + currentRotation;
-                Vector3 newPosition = CalculatePosition(finalAngle);
+                var finalAngle = initialAngles[i] + currentRotation;
+                var newPosition = CalculatePosition(finalAngle);
                 cubes[i].transform.position = newPosition;
                 
                 cubes[i].transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime * direction);
             }
         }
     }
+
+    //сетеры
     
     public void SetRadius(float newRadius)
     {
@@ -173,30 +170,30 @@ public class MerryGoRound1 : MonoBehaviour
         uniformDistribution = isUniform;
         CreateCubes();
     }
-
+    //вызывается при изменении радиуса
     void UpdateCubePositions()
     {
         for (int i = 0; i < cubes.Count; i++)
         {
             if (cubes[i] != null)
             {
-                Vector3 position = CalculatePosition(initialAngles[i]);
+                var position = CalculatePosition(initialAngles[i]);
                 cubes[i].transform.position = position;
             }
         }
     }
     
-    void UpdatePositionsOnly()
-    {
-        for (int i = 0; i < cubes.Count; i++)
-        {
-            if (cubes[i] != null)
-            {
-                Vector3 position = CalculatePosition(initialAngles[i]);
-                cubes[i].transform.position = position;
-            }
-        }
-        parametersChanged = false;
-        CacheParameters();
-    }
+    // void UpdatePositionsOnly()
+    // {
+    //     for (int i = 0; i < cubes.Count; i++)
+    //     {
+    //         if (cubes[i] != null)
+    //         {
+    //             Vector3 position = CalculatePosition(initialAngles[i]);
+    //             cubes[i].transform.position = position;
+    //         }
+    //     }
+    //     parametersChanged = false;
+    //     CacheParameters();
+    // } не нужон!!!!
 }
